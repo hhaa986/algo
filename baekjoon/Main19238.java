@@ -1,3 +1,4 @@
+//201014
 package baekjoon;
 
 import java.io.BufferedReader;
@@ -24,7 +25,7 @@ public class Main19238 {
 		N = Integer.parseInt(st.nextToken());	//map크기
 		M = Integer.parseInt(st.nextToken());	//사람 수
 		oil = Integer.parseInt(st.nextToken());	//연료
-//		System.out.println(oil);
+
 		map = new int[N][N];
 		for(int i=0; i<N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -47,11 +48,7 @@ public class Main19238 {
 			map[sx][sy] = i;
 		}
 		
-//		for(int[] a :map) System.out.println(Arrays.toString(a));
-//		for(Person a :p) System.out.println(a.toString());
-//		System.out.println("driver: "+driverX+" "+driverY);
-		
-		//solve + output
+		//solve
 		for(int i=0; i<M; i++) {
 			driveBfs(driverX, driverY);
 		}
@@ -63,6 +60,8 @@ public class Main19238 {
 				}
 			}
 		}
+		
+		//output
 		if(error) {
 			System.out.println(-1);
 		}
@@ -90,7 +89,6 @@ public class Main19238 {
 				return;
 			}
 		}
-//		System.out.println("dx: "+dx+" || dy: "+dy);
 		
 		while(!q.isEmpty()) {
 			useOil++;
@@ -98,30 +96,32 @@ public class Main19238 {
 			for(int w=0; w<qsize; w++) {
 				int[] curr = q.poll();
 				visited[curr[0]][curr[1]] = true;
+				
 				for(int d=0; d<4; d++) {
 					int dxx = curr[0] + dirX[d];
 					int dyy = curr[1] + dirY[d];
 					if(dxx>=0 && dxx<N && dyy>=0 && dyy<N && map[dxx][dyy] != -1 && !visited[dxx][dyy]) {
-	//					System.out.println("dxx: "+dxx+" || dyy: "+dyy+ " ||oil: "+oil+ " ||useoil: "+useOil);
-						if(map[dxx][dyy] > 0) {
+
+						if(map[dxx][dyy] > 0) { //승객 찾음
 							useOil++;
 							visited = new boolean[N][N];
-//							System.out.println(useOil+"oil: "+oil);
 							oil -= useOil;
 							useOil = 0;
 							driverX = dxx;
 							driverY = dyy;
-							p[map[driverX][driverY] -1].sx = -1;
+							//승객 초기화
+							p[map[driverX][driverY] -1].sx = -1;	
 							p[map[driverX][driverY] -1].sy = -1;
+							//도착지 셋팅
 							int ax = p[map[driverX][driverY] - 1].ax;
 							int ay = p[map[driverX][driverY] - 1].ay;
+							//승객 위치 초기화(맵)
 							map[driverX][driverY] = 0;
 							visited[driverX][driverY] = true;
-							
+							//그 다음 큐는 안찾음
 							while(!q.isEmpty()) q.poll();
-						
+							//목적지만 큐시작 --> 다시 여기부터 승객  찾아야되니까
 							q.offer(new int[] {ax, ay});
-//							System.out.println(ax+" "+ay);
 							if(!isArrived(driverX, driverY, ax, ay)) {
 								error = true;
 								return;
@@ -134,30 +134,24 @@ public class Main19238 {
 					}
 				}
 			}
+			//가다가 오일 아웃되면 -1
 			if(oil - useOil == 0) {
 				error = true;
 				return;
 			}
-//			for(boolean[] a :visited) System.out.println(Arrays.toString(a));
-//			for(int[] a :map) System.out.println("?"+Arrays.toString(a));
-//			System.out.println();
-			
 		}
 	}
 	
+	//승객 출발 --> 도착지 갈 수 있나?
 	private static boolean isArrived(int dx, int dy, int ax, int ay) {
-//		System.out.println("isArrived start");
-//		System.out.println(ax+" "+ay);
 		boolean[][] checked = new boolean[N][N];
 		Queue<int[]> q = new LinkedList<>();
 		q.offer(new int[] {dx, dy});
 		checked[dx][dy] = true;
-//		for(boolean[] a :checked) System.out.println(Arrays.toString(a));
-//		System.out.println("first\n");
+
 		int useOil = 0;
 		while(!q.isEmpty()) {
 			
-//			System.out.println(useOil+" "+oil);
 			int qsize = q.size();
 			for(int i=0; i<qsize; i++) {
 				int[] curr = q.poll();
@@ -166,8 +160,8 @@ public class Main19238 {
 					int dxx = curr[0] + dirX[d];
 					int dyy = curr[1] + dirY[d];
 					if(dxx>=0 && dxx<N && dyy>=0 && dyy<N && map[dxx][dyy] != -1 && !checked[dxx][dyy]) {
-						if(dxx == ax && dyy == ay) {
-//							System.out.println(useOil+" oil:"+oil);
+						if(dxx == ax && dyy == ay) {//도착지 도착
+
 							oil += useOil;
 							driverX = dxx;
 							driverY = dyy;
@@ -178,8 +172,6 @@ public class Main19238 {
 					}
 				}
 			}
-//			for(boolean[] a :checked) System.out.println(Arrays.toString(a));
-//			System.out.println();
 			useOil++;
 			if(oil - useOil == 0) return false;
 		}
