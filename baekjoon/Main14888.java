@@ -1,4 +1,4 @@
-// 201008 연산자 끼워넣기
+// 201008 
 package baekjoon;
 
 import java.io.*;

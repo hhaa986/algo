@@ -1,4 +1,4 @@
-//201015 어른상어                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   어른상어
+//201017 어른상어                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   어른상어
 package baekjoon;
 
 import java.io.*;
@@ -22,7 +22,6 @@ public class Main19237 {
         nowShark = new int[M][2];
         sharkNowDir = new int[M];
         shark_cnt = M;
-//        System.out.println(shark_cnt);
         int[][][] sharkDir = new int[M][4][4]; 	// 상어 우선순위 방향 = 방향 0,1,2,3
         for(int i=0; i<N; i++) {
         	st = new StringTokenizer(br.readLine());
@@ -39,20 +38,14 @@ public class Main19237 {
         for(int i=0; i<M; i++) {	//상어 idx 0부터 시작 , 방향도 0부터
         	sharkNowDir[i] = Integer.parseInt(st.nextToken()) - 1;
         }
-//        System.out.print("shark now : ");
-//        System.out.println(Arrays.toString(sharkNowDir));
         
         for(int i=0; i<M; i++) {
-//        	System.out.println("shark idx : "+i);
         	for(int j=0; j<4; j++) {
         		st = new StringTokenizer(br.readLine());
         		for(int k=0; k<4; k++) {
         			sharkDir[i][j][k] = Integer.parseInt(st.nextToken()) -1;
-//        			System.out.print(sharkDir[i][j][k]+" ");
         		}
-//        		System.out.println();
         	}
-//        	System.out.println();
         }
        
         
@@ -102,7 +95,6 @@ public class Main19237 {
         					nowShark[i][0] = -1;
         					nowShark[i][1] = -1;
         					shark_cnt--;
-//        					System.out.println(shark_cnt);
         				} 
         				else {
         					nowShark[i][0] = x;
@@ -123,7 +115,6 @@ public class Main19237 {
         					nowShark[i][0] = -1;
         					nowShark[i][1] = -1;
         					shark_cnt--;
-//        					System.out.println(shark_cnt);
         				} 
         				else {
         					nowShark[i][0] = x;
@@ -147,10 +138,8 @@ public class Main19237 {
         	}
         }
         
-        
         //output
        if(shark_cnt > 1) {
-//    	   System.out.println(shark_cnt);
     	   result = -1;
        }
     	System.out.println(result);

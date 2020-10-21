@@ -3,6 +3,7 @@ package baekjoon;
 
 import java.io.*;
 import java.util.*;
+
 public class Main2630 {
 	/**
 	 * 전체 종이의 크기 N*N 

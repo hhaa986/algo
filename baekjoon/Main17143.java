@@ -59,7 +59,7 @@ public class Main17143 {
 //				System.out.println("처음x,y: "+ssh.x+" "+ssh.y);
 				if(ssh.d == 0 || ssh.d == 1) {//상하
 					int size = sizeMap[ssh.x][ssh.y];
-					for(int k=0; k<ssh.v%(R-1)*2; k++) {//속도만큼 돈다
+					for(int k=0; k<ssh.v%((R-1)*2); k++) {//속도만큼 돈다
 //						System.out.println(k+" x,y : "+ssh.x+" "+ssh.y);
 						int xx = ssh.x + dirX[ssh.d];
 						if(isMap(xx, R)) {//map안에 있을때
@@ -85,7 +85,7 @@ public class Main17143 {
 				}
 				else if(ssh.d == 2 || ssh.d == 3) {//우좌
 					int size = sizeMap[ssh.x][ssh.y];
-					for(int k=0; k<ssh.v%(C-1)*2; k++) {//속도만큼 돈다
+					for(int k=0; k<ssh.v%((C-1)*2); k++) {//속도만큼 돈다
 //						System.out.println(k+" x,y : "+ssh.x+" "+ssh.y);
 						int yy = ssh.y + dirY[ssh.d];
 						if(isMap(yy, C)) {//map안에 있을때

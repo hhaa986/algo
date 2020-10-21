@@ -1,21 +1,14 @@
-//201014
+//201014 201015 201017 스타트택시
 package baekjoon;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main19238 {
 	static int dirX[] = {-1,0,1,0}, dirY[] = {0,-1,0,1};
-	static int N, M, oil, driverX, driverY, map[][];
+	static int N, M, oil, map[][];
 	static Person p[];
+	static boolean check[][], pcheck[];
 	static boolean error = false;
 	public static void main(String[] args) throws Exception{
 		System.setIn(new FileInputStream("res/input.txt"));
@@ -25,19 +18,18 @@ public class Main19238 {
 		N = Integer.parseInt(st.nextToken());	//map크기
 		M = Integer.parseInt(st.nextToken());	//사람 수
 		oil = Integer.parseInt(st.nextToken());	//연료
-
 		map = new int[N][N];
 		for(int i=0; i<N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for(int j=0; j<N; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
-				if(map[i][j] == 1) map[i][j] = -1;
+				if(map[i][j] == 1) map[i][j] = -1;//벽
 			}
 		}
 		st = new StringTokenizer(br.readLine());
-		driverX = Integer.parseInt(st.nextToken()) -1;
-		driverY = Integer.parseInt(st.nextToken()) -1;
-		p = new Person[M];
+		int driverX = Integer.parseInt(st.nextToken()) -1;
+		int driverY = Integer.parseInt(st.nextToken()) -1;
+		p = new Person[M];//사람 인덱스 0~M-1
 		for(int i=1; i<=M; i++) {
 			st = new StringTokenizer(br.readLine());
 			int sx = Integer.parseInt(st.nextToken()) -1;
@@ -49,133 +41,83 @@ public class Main19238 {
 		}
 		
 		//solve
-		for(int i=0; i<M; i++) {
-			driveBfs(driverX, driverY);
-		}
-		loop:for(int i=0; i<N; i++) {
-			for(int j=0; j<N; j++) {
-				if(map[i][j] > 0 && !error) {
-					error = true;
-					break loop;
-				}
-			}
-		}
+
+		check = new boolean[N][N];
+		pcheck = new boolean[M];
+		getPersonBfs(driverX, driverY);
 		
 		//output
-		if(error) {
-			System.out.println(-1);
-		}
-		else {
-			System.out.println(oil);
-		}
 	}
-	
-	private static void driveBfs(int dx, int dy) {
-		boolean[][] visited = new boolean[N][N];
+
+	private static void getPersonBfs(int dx, int dy) {
 		Queue<int[]> q = new LinkedList<>();
-		
-		int useOil = 0;
 		q.offer(new int[] {dx, dy});
-		if (map[dx][dy] > 0) {
-			p[map[dx][dy] - 1].sx = -1;
-			p[map[dx][dy] - 1].sy = -1;
-			int ax = p[map[dx][dy] -1].ax;
-			int ay = p[map[dx][dy] -1].ay;
-			map[dx][dy] = 0;
-			while(!q.isEmpty()) q.poll();
-			q.offer(new int[] {ax, ay});
-			if(!isArrived(dx, dy, ax, ay)) {
-				error = true;
-				return;
-			}
-		}
-		
+		check[dx][dy] = true;
+		int useOil = 0;
 		while(!q.isEmpty()) {
-			useOil++;
 			int qsize = q.size();
-			for(int w=0; w<qsize; w++) {
-				int[] curr = q.poll();
-				visited[curr[0]][curr[1]] = true;
-				
-				for(int d=0; d<4; d++) {
-					int dxx = curr[0] + dirX[d];
-					int dyy = curr[1] + dirY[d];
-					if(dxx>=0 && dxx<N && dyy>=0 && dyy<N && map[dxx][dyy] != -1 && !visited[dxx][dyy]) {
-
-						if(map[dxx][dyy] > 0) { //승객 찾음
-							useOil++;
-							visited = new boolean[N][N];
-							oil -= useOil;
-							useOil = 0;
-							driverX = dxx;
-							driverY = dyy;
-							//승객 초기화
-							p[map[driverX][driverY] -1].sx = -1;	
-							p[map[driverX][driverY] -1].sy = -1;
-							//도착지 셋팅
-							int ax = p[map[driverX][driverY] - 1].ax;
-							int ay = p[map[driverX][driverY] - 1].ay;
-							//승객 위치 초기화(맵)
-							map[driverX][driverY] = 0;
-							visited[driverX][driverY] = true;
-							//그 다음 큐는 안찾음
-							while(!q.isEmpty()) q.poll();
-							//목적지만 큐시작 --> 다시 여기부터 승객  찾아야되니까
-							q.offer(new int[] {ax, ay});
-							if(!isArrived(driverX, driverY, ax, ay)) {
-								error = true;
-								return;
-							}
-						}
-						else {
-							visited[dxx][dyy]  = true;
-							q.offer(new int[] {dxx, dyy});
-						}
-					}
-				}
-			}
-			//가다가 오일 아웃되면 -1
-			if(oil - useOil == 0) {
-				error = true;
-				return;
-			}
-		}
-	}
-	
-	//승객 출발 --> 도착지 갈 수 있나?
-	private static boolean isArrived(int dx, int dy, int ax, int ay) {
-		boolean[][] checked = new boolean[N][N];
-		Queue<int[]> q = new LinkedList<>();
-		q.offer(new int[] {dx, dy});
-		checked[dx][dy] = true;
-
-		int useOil = 0;
-		while(!q.isEmpty()) {
 			
-			int qsize = q.size();
-			for(int i=0; i<qsize; i++) {
+			List<int[]> temp = new ArrayList<>();
+			for(int t=0; t<qsize; t++) {
 				int[] curr = q.poll();
-				
 				for(int d=0; d<4; d++) {
-					int dxx = curr[0] + dirX[d];
-					int dyy = curr[1] + dirY[d];
-					if(dxx>=0 && dxx<N && dyy>=0 && dyy<N && map[dxx][dyy] != -1 && !checked[dxx][dyy]) {
-						if(dxx == ax && dyy == ay) {//도착지 도착
-
-							oil += useOil;
-							driverX = dxx;
-							driverY = dyy;
-							return true;
+					int dxx = curr[0]+dirX[d];
+					int dyy = curr[1]+dirY[d];
+					if(dxx>=0 && dyy>=0 && dxx<N && dyy<N && !check[dxx][dyy]) {
+						if(map[dxx][dyy] > 0) {
+							temp.add(new int[] {map[dxx][dyy], dxx, dyy});
 						}
-						checked[dxx][dyy] = true;
+						check[dxx][dyy] = true;
 						q.offer(new int[] {dxx, dyy});
 					}
 				}
 			}
-			useOil++;
-			if(oil - useOil == 0) return false;
+			oil--;//거리 플러스
+			System.out.println("oil: "+oil);
+			if(oil == 0) {
+				error = true;
+				return;
+			}
+			if(temp.size() > 0) {
+				//손님 sort -> 행 -> 열
+				Collections.sort(temp, new Comparator<int[]>() {
+					@Override
+					public int compare(int[] o1, int[] o2) {
+						if(o1[1] == o2[1]) {
+							return (o1[2]- o2[2]);
+						}
+						else 
+							return (o1[1]- o2[1]);
+					}});
+				while(!q.isEmpty()) q.poll();
+				check = new boolean[N][N];
+				// 맨 첫번째 temp 이용해서 map 값 초기화
+				int tx = temp.get(0)[1];
+				int ty = temp.get(0)[2];
+				int ti = temp.get(0)[0] -1;
+				map[tx][ty] = 0;
+				int tax = p[ti].ax;
+				int tay = p[ti].ay;
+				q.offer(new int[] {tx, ty});
+				check[tx][ty] = true;
+				pcheck[ti - 1] = true;// 목적지 도착한 다음에 ! 체크하기
+				printMap();
+				// 목적지 가는 bfs 고고
+				//
+				// 목적지만 q에 넣기
+				//현재 위치(승객 만난곳) check = true;
+				
+			}
 		}
-		return false;
+	}
+
+	private static void printMap() {
+		System.out.println("printMap");
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<N; j++) {
+				System.out.print(map[i][j]+" ");
+			}System.out.println();
+		}
 	}
 
 	static class Person {
